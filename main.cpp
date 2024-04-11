@@ -8,6 +8,7 @@ int main() {
     ChatClient client;
 
     std::string serverIP;
+    std::string clientName;
     int serverPort;
 
     ui.displayMessage("채팅 클라이언트를 시작합니다.");
@@ -17,7 +18,10 @@ int main() {
     ui.displayMessage("서버 포트를 입력하세요: ");
     serverPort = std::stoi(ui.getUserInput());
 
-    if (client.connectToServer(serverIP, serverPort)) {
+    ui.displayMessage("사용할 이름을 입력하세요: ");
+    clientName = ui.getUserInput();
+
+    if (client.connectToServer(serverIP, serverPort, clientName)) {
         ui.displayMessage("서버에 연결되었습니다. 메시지를 입력하거나 종료하려면 'exit'를 입력하세요.");
 
         std::thread sendThread([&client, &ui]() {

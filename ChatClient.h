@@ -19,7 +19,7 @@ public:
     ~ChatClient();
 
     // 서버에 연결을 시도합니다.
-    bool connectToServer(const std::string& serverIP, int serverPort);
+    bool connectToServer(const std::string& serverIP, int serverPort, const std::string& clientName);
 
     // 서버로부터 연결을 해제합니다.
     void disconnect();

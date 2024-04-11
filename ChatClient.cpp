@@ -19,16 +19,13 @@ bool ChatClient::initializeNetwork() {
 void ChatClient::cleanupNetwork() {
     WSACleanup();
 }
-
-bool ChatClient::connectToServer(const std::string& serverIP, int serverPort) {
+bool ChatClient::connectToServer(const std::string& serverIP, int serverPort, const std::string& clientName) {
     connectSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (connectSocket == INVALID_SOCKET) {
         std::cerr << "소켓 생성 실패, Err :" << WSAGetLastError() << std::endl;
         return false;
     }
-
- 
-    sockaddr_in hint;
+    sockaddr_in hint{};
     hint.sin_family = AF_INET;
     hint.sin_port = htons(serverPort);
     inet_pton(AF_INET, serverIP.c_str(), &hint.sin_addr);
@@ -37,6 +34,14 @@ bool ChatClient::connectToServer(const std::string& serverIP, int serverPort) {
     int connResult = connect(connectSocket, (sockaddr*)&hint, sizeof(hint));
     if (connResult == SOCKET_ERROR) {
         std::cerr << "서버에 연결하지 못하였습니다. Err :" << WSAGetLastError() << std::endl;
+        closesocket(connectSocket);
+        return false;
+    }
+
+    // 서버 연결 성공 후 클라이언트 이름 전송
+    int sendResult = send(connectSocket, clientName.c_str(), clientName.length(), 0);
+    if (sendResult == SOCKET_ERROR) {
+        std::cerr << "클라이언트 이름 전송 실패, Err :" << WSAGetLastError() << std::endl;
         closesocket(connectSocket);
         return false;
     }
